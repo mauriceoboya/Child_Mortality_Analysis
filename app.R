@@ -10,7 +10,7 @@ library(stringr)
 library(plotly)
 library(tibble)
 library(DT)
-
+#
 # Read the main data
 data <- read_excel('main_data.xlsx', sheet ='maindata')
 data$ResidenceCounty <- str_to_title(data$ResidenceCounty)

@@ -1,4 +1,4 @@
-FROM rocker/r-ver:4.0.3
+FROM rocker/shiny:4
 
 # Install necessary packages
 RUN apt-get update &&  apt-get install -y \

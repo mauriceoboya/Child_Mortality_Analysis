@@ -5,9 +5,9 @@ account: oboyamaurice
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 11259541
-bundleId: 8276782
+bundleId: 8277421
 url: https://oboyamaurice.shinyapps.io/Child_Mortality_Analysis/
 version: 1
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: child_mortality.pdf|child_mortality.Rmd|Rplot.png|Rplot02.png
+ignoredFiles: LICENSE|maurice/child_mortality.pdf|maurice/child_mortality.Rmd|maurice/Rplot.png|maurice/Rplot02.png|README.md

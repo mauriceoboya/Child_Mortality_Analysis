@@ -1,14 +1,14 @@
 library(shiny)
+library(shinydashboard)
+library(shinyauthr)
 library(readxl)
 library(dplyr)
 library(sf)
 library(ggplot2)
 library(viridis)
 library(stringr)
-library(shinydashboard)
 library(plotly)
 library(tibble)
-library(shinyauthr)
 
 # Read the main data
 data <- read_excel('main_data.xlsx', sheet ='maindata')
@@ -37,10 +37,7 @@ user_base <- tibble::tibble(
 ui <- dashboardPage(
   dashboardHeader(title = "Childhood Mortality Analysis"),
   dashboardSidebar(
-    sidebarMenu(
-      menuItem("Mortality Overview", tabName = "overview", icon = icon("home")),
-      menuItem("Spatial Analysis", tabName = "filter_data", icon = icon("filter"))
-    ),
+    uiOutput("sidebar_menu"),
     div(class = "pull-right", shinyauthr::logoutUI(id = "logout"))
   ),
   dashboardBody(
@@ -50,17 +47,12 @@ ui <- dashboardPage(
               uiOutput("overview_content")
       ),
       tabItem(tabName = "filter_data",
-              fluidPage(
-                titlePanel("Filter Data"),
-                sidebarLayout(
-                  sidebarPanel(
-                    selectInput("county", "Select County:", choices = c("All", unique(mortality_count$Name)))
-                  ),
-                  mainPanel(
-                    plotOutput("map")
-                  )
-                )
-              )
+              uiOutput("filter_content")
+              
+      ),
+      tabItem(tabName = 'data_view',
+             uiOutput("page_content")
+        
       )
     )
   )
@@ -77,24 +69,54 @@ server <- function(input, output, session) {
     log_out = reactive(logout_init())
   )
   
-  # call the logout module with reactive trigger to hide/show
+  # call the logout module 
   logout_init <- shinyauthr::logoutServer(
     id = "logout",
     active = reactive(credentials()$user_auth)
   )
   
-  output$map <- renderPlot({
-    filtered_data <- mortality_count
-    if (input$county != "All") {
-      filtered_data <- filter(mortality_count, Name %in% input$county)
+  output$sidebar_menu <- renderUI({
+    if (credentials()$user_auth) {
+      sidebarMenu(
+        menuItem("Data Summary", tabName = "data_view", icon = icon("home")),
+        menuItem("Mortality Overview", tabName = "overview", icon = icon("check")),
+        menuItem("Spatial Analysis", tabName = "filter_data", icon = icon("map-marker"))
+      )
+    } else {
+      NULL
     }
-    print(filtered_data)  # Check if filtered_data is correct
-    ggplot() +
-      geom_sf(data = filtered_data, aes(fill = MortalityCount)) +
-      scale_fill_viridis_c() +
-      labs(fill = "Mortality Count") +
-      theme_minimal() +
-      ggtitle("Spatial Distribution of Mortality Count")
+  })
+  
+  output$map <- renderPlot({
+    if (credentials()$user_auth) {
+      filtered_data <- mortality_count
+      if (input$county != "All") {
+        filtered_data <- filter(filtered_data, Name %in% input$county)
+      }
+      ggplot() +
+        geom_sf(data = filtered_data, aes(fill = MortalityCount)) +
+        scale_fill_viridis_c() +
+        labs(fill = "Mortality Count") +
+        theme_minimal() +
+        ggtitle("Spatial Distribution of Mortality Count")
+    }
+  })
+  
+  output$filter_content <-renderUI({
+    if (credentials()$user_auth){
+      fluidPage(
+        titlePanel("Filter Data"),
+        sidebarLayout(
+          sidebarPanel(
+            selectInput("county", "Select County:", choices = c("All", unique(mortality_count$Name)))
+          ),
+          mainPanel(
+            plotOutput("map")
+          )
+        )
+      )
+      
+    }
   })
   
   output$overview_content <- renderUI({
@@ -141,7 +163,7 @@ server <- function(input, output, session) {
       if (input$age_range[1] != min(data$AgeAtFirstBirth) || input$age_range[2] != max(data$AgeAtFirstBirth)) {
         filtered <- filtered %>% filter(AgeAtFirstBirth >= input$age_range[1] & AgeAtFirstBirth <= input$age_range[2])
       }
-      if (input$only_deceased == TRUE) { # Convert to logical
+      if (input$only_deceased == TRUE) { 
         filtered <- filtered %>% filter(Outcome == "Dead")
       }
       
@@ -153,6 +175,23 @@ server <- function(input, output, session) {
                barmode = "group")
     }
   })
+  
+  ###############################################################data#####
+  
+  generate_table <- function(data) {
+    datatable(data, options = list(pageLength = 10))
+  }
+  
+  # Render table with first 10 rows
+  output$page_content <- renderUI({
+      generate_table(data)
+  })
+  
+  ###########################################################################
+  
 }
 
+
+
 shinyApp(ui = ui, server = server)
+

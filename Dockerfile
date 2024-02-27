@@ -5,10 +5,12 @@ FROM rocker/shiny:4
 RUN apt-get update && apt-get install -y \
     libssl-dev \
     libcurl4-openssl-dev \
-    iputils-ping \
-    curl \
+    libgdal-dev \
+    libproj-dev \
+    libudunits2-dev \
+    libxml2-dev \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/
 
 # Install R packages
 RUN R -e "install.packages(c('shinydashboard', 'shinymanager', 'readxl', 'dplyr', 'sf', 'ggplot2', 'viridis', 'stringr', 'plotly', 'tibble', 'DT'), repos='https://cran.rstudio.com/')"

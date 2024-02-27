@@ -17,7 +17,7 @@ RUN R -e "install.packages(c('shiny','shinymanager'), repos='https://cran.rstudi
 WORKDIR /srv/shiny-server
 
 # Copy your Shiny app code into the image
-COPY ./MauriceOboya /srv/shiny-server/MauriceOboya
+COPY ./ /srv/shiny-server/MauriceOboya
 
 # Expose the Shiny port (as per Render convention)
 EXPOSE 8080

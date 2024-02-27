@@ -12,6 +12,7 @@ RUN apt-get update &&  apt-get install -y \
 # Install R packages
 
 RUN R -e "install.packages(c('shiny', 'shinydashboard', 'readxl', 'dplyr', 'sf', 'ggplot2', 'viridis', 'stringr', 'plotly', 'tibble'), repos='https://cran.rstudio.com/')"
+RUN R -e "install.packages('https://cloud.r-project.org/src/contrib/shinyauthr_1.0.0.tar.gz', repos = NULL, type = 'source')"
 # Copy your Shiny app code into the image
 COPY ./  /srv/shiny-server/MauriceOboya
 

@@ -13,14 +13,11 @@ RUN apt-get update && apt-get install -y \
 # Install R packages
 RUN R -e "install.packages(c('shiny','shinymanager'), repos='https://cran.rstudio.com/')"
 
-# Create a directory to hold the Shiny app code
-RUN mkdir -p /usr/src/app
-
 # Set the working directory
-WORKDIR /usr/src/app
+WORKDIR /srv/shiny-server
 
 # Copy your Shiny app code into the image
-COPY . /usr/src/app
+COPY ./MauriceOboya /srv/shiny-server/MauriceOboya
 
 # Expose the Shiny port (as per Render convention)
 EXPOSE 8080
@@ -29,5 +26,4 @@ EXPOSE 8080
 ENV PORT=8080
 
 # Command to run Shiny app
-CMD ["R", "-e", "shiny::runApp('/usr/src/app/MauriceOboya', host='0.0.0.0', port=8080)"]
-
+CMD ["R", "-e", "shiny::runApp('/srv/shiny-server/MauriceOboya', host='0.0.0.0', port=8080)"]

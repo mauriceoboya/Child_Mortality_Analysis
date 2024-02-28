@@ -24,10 +24,10 @@ WORKDIR /srv/shiny-server
 COPY ./ /srv/shiny-server/MauriceOboya
 
 # Expose the Shiny port (as per Render convention)
-EXPOSE 8080
+EXPOSE 80
 
 # Set environment variable for Shiny server port
-ENV PORT=8080
+ENV PORT=80
 
 # Command to run Shiny app
-CMD ["R", "-e", "shiny::runApp('/srv/shiny-server/MauriceOboya', host='0.0.0.0', port=8080)"]
+CMD ["R", "-e", "shiny::runApp('/srv/shiny-server/MauriceOboya', host='0.0.0.0', port=80)"]

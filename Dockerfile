@@ -1,4 +1,4 @@
-# Use the rocker/shiny:4 base image
+
 FROM rocker/shiny:4
 
 # Install necessary packages
@@ -23,11 +23,6 @@ WORKDIR /srv/shiny-server
 # Copy your Shiny app code into the image
 COPY ./ /srv/shiny-server/MauriceOboya
 
-# Expose the Shiny port (as per Render convention)
-EXPOSE 80
-
-# Set environment variable for Shiny server port
-ENV PORT=80
 
 # Command to run Shiny app
-CMD ["R", "-e", "shiny::runApp('/srv/shiny-server/MauriceOboya', host='0.0.0.0', port=80)"]
+CMD ["R", "-e", "shiny::runApp('/srv/shiny-server/MauriceOboya')"]

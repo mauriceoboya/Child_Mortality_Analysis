@@ -8,7 +8,7 @@ To run the app locally, follow these steps:
 
 1. **Clone this repository** to your local machine:
    ```bash
-   git clone https://github.com/mauriceoboya/childhood-mortality-analysis.git
+   git clone https://github.com/mauriceoboya/Child_Mortality_Analysis.git
    ```
 
 2. **Navigate to the project directory**:

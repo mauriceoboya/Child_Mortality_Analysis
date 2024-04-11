@@ -45,13 +45,23 @@ This will launch the app in your default web browser. You can then interact with
 - Visualize child mortality rates by mother's education level.
 - Apply filters to focus on specific subsets of the data.
 
+  
 ### Spatial Analysis
 
 - Select a county to view mortality rates on a spatial map.
 - Use the dropdown menu to choose a specific county or view data for all counties.
 
+![Spatial Map](spatialdata.png)
+
+
+
 ## Data Sources
 
 The main data file (`main_data.xlsx`) contains the childhood mortality data used in this analysis. It should be structured with appropriate columns for analysis.
 
-The spatial map (`spatialdata.png`) provides a visual representation of mortality rates by county.
+
+## Contributing
+
+Contributions are welcome! If you have suggestions or improvements, please open an issue or create a pull request.
+## License
+This project is licensed under the MIT License.

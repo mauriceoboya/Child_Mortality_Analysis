@@ -28,7 +28,7 @@ To run the app locally, follow these steps:
 Once the installation is complete, you can run the Shiny app by executing the following command in R or RStudio:
 
 ```R
-shiny::runApp()
+ Rscript app.R
 ```
 
 This will launch the app in your default web browser. You can then interact with the app using the provided interface.

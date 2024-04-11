@@ -13,7 +13,7 @@ To run the app locally, follow these steps:
 
 2. **Navigate to the project directory**:
    ```bash
-   cd childhood-mortality-analysis
+   cd Child_Mortality_Analysis
    ```
 
 3. **Install the required R packages** listed in `dependencies.R`. You can install them manually or use the following command:

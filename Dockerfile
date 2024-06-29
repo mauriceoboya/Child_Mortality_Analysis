@@ -1,7 +1,6 @@
-
 FROM rocker/shiny:4
 
-# Install necessary packages
+# Install necessary system dependencies
 RUN apt-get update && apt-get install -y \
     libssl-dev \
     libcurl4-openssl-dev \
@@ -10,19 +9,23 @@ RUN apt-get update && apt-get install -y \
     libudunits2-dev \
     libxml2-dev \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/
+    && rm -rf /var/lib/apt/lists/*
 
 # Install R packages
-RUN R -e "install.packages(c('shinydashboard', 'shinymanager', 'readxl', 'dplyr', 'sf', 'ggplot2', 'viridis', 'stringr', 'plotly', 'tibble', 'DT'), repos='https://cran.rstudio.com/')"
+RUN R -e "install.packages(c('shinydashboard', 'shinyauthr', 'shinymanager', 'readxl', 'dplyr', 'sf', 'ggplot2', 'viridis', 'stringr', 'plotly', 'tibble', 'DT'), repos='https://cran.rstudio.com/')"
+
+# Verify installation of shinyauthr
+RUN R -e "if (!require('shinyauthr')) { stop('shinyauthr package not installed correctly') }"
 
 # Copy your Shiny app code into the image
+COPY . /usr/src/app
 
 # Set the working directory
-WORKDIR /srv/shiny-server
+WORKDIR /usr/src/app
 
-# Copy your Shiny app code into the image
-COPY ./ /srv/shiny-server/MauriceOboya
+# Expose the port your Shiny app will run on
+EXPOSE 3838
 
+# Define the command to run your application
+CMD ["R", "-e", "shiny::runApp('/usr/src/app/app.R', host='0.0.0.0', port=3838)"]
 
-# Command to run Shiny app
-CMD ["R", "-e", "shiny::runApp('/srv/shiny-server/MauriceOboya')"]

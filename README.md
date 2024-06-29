@@ -8,12 +8,12 @@ To run the app locally, follow these steps:
 
 1. **Clone this repository** to your local machine:
    ```bash
-   git clone https://github.com/mauriceoboya/childhood-mortality-analysis.git
+   git clone https://github.com/mauriceoboya/Child_Mortality_Analysis.git
    ```
 
 2. **Navigate to the project directory**:
    ```bash
-   cd childhood-mortality-analysis
+   cd Child_Mortality_Analysis
    ```
 
 3. **Install the required R packages** listed in `dependencies.R`. You can install them manually or use the following command:
@@ -28,7 +28,7 @@ To run the app locally, follow these steps:
 Once the installation is complete, you can run the Shiny app by executing the following command in R or RStudio:
 
 ```R
-shiny::runApp()
+ Rscript app.R
 ```
 
 This will launch the app in your default web browser. You can then interact with the app using the provided interface.

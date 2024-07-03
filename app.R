@@ -1,4 +1,4 @@
-Etlibrary(shiny)
+library(shiny)
 library(shinydashboard)
 library(shinymanager)
 library(readxl)

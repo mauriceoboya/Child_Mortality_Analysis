@@ -14,8 +14,6 @@ RUN apt-get update && apt-get install -y \
 # Install R packages
 RUN R -e "install.packages(c('shinydashboard', 'shinymanager', 'readxl', 'dplyr', 'sf', 'ggplot2', 'viridis', 'stringr', 'plotly', 'tibble', 'DT'), repos='https://cran.rstudio.com/')"
 
-# Install shinyauthr package from GitHub
-RUN R -e "remotes::install_github('paulc91/shinyauthr')
 # Copy your Shiny app code into the image
 COPY . /usr/src/app
 

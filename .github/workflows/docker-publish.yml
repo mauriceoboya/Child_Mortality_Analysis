@@ -3,10 +3,10 @@ name: Deploy Shiny App
 on:
   push:
     branches:
-      - main  # Adjust branch name as needed
+      - main  
   pull_request:
     branches:
-      - main  # Adjust branch name as needed
+      - main  
 
 jobs:
   deploy:

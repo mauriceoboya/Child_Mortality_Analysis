@@ -57,7 +57,7 @@ server <- function(input, output, session) {
     user = c("shiny", "shinymanager"), 
     password = c("shiny", "12345"), 
     start = c("2019-04-15", NA), 
-    expire = c(NA, "2025-12-31"),
+    expire = c(NA, NA),
     admin = c(FALSE, TRUE),
     comment = "Simple and secure authentication mechanism for single ‘Shiny’ applications.",
     stringsAsFactors = FALSE

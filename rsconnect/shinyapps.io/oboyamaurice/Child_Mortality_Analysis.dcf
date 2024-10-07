@@ -1,0 +1,13 @@
+name: Child_Mortality_Analysis
+title: Child_Mortality_Analysis
+username: oboyamaurice
+account: oboyamaurice
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 11259541
+bundleId: 9192325
+url: https://oboyamaurice.shinyapps.io/Child_Mortality_Analysis/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: LICENSE|README.md

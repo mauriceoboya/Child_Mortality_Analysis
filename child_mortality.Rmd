@@ -1,0 +1,165 @@
+---
+title: "Child Mortality Analysis"
+author: "Maurice Oboya"
+output: pdf_document
+date: "2024-02-19"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+Childhood mortality, the death of children under the age of five, is a critical indicator of a population's health and wellbeing. Despite significant advancements in healthcare and technology, childhood mortality remains a pressing global challenge, particularly in low- and middle-income countries. In Kenya, like many other countries in Sub-Saharan Africa, reducing childhood mortality rates is a priority for public health initiatives and policy interventions.
+
+This report presents an analysis of childhood mortality rates across different counties in Kenya. Using a combination of demographic data on childhood mortality and spatial information on county boundaries, we aim to understand the spatial distribution of childhood mortality and identify factors contributing to variations in mortality rates. By exploring patterns and disparities in childhood mortality, this analysis seeks to inform targeted interventions and policies aimed at reducing mortality rates and improving child health outcomes in Kenya.
+
+```{r echo=FALSE,results='hide'}
+library(readxl)
+library(dplyr)
+library(sp)
+library(spdep)
+library(stringr)
+library(ggplot2)
+
+data <- read_excel('main_data.xlsx', sheet ='maindata')
+data$ResidenceCounty <- str_to_title(data$ResidenceCounty)
+shapefile <- st_read("./shapefiles/County.shx")
+shapefile <- st_make_valid(shapefile)
+joined_data <- shapefile %>%
+  inner_join(data, by = c("Name" = "ResidenceCounty"))
+
+```
+
+# Data Visualization
+Visualizing the data is an essential step in understanding patterns, relationships, and trends. In this section, we present various visualizations to explore different aspects of the dataset.
+
+## Exploring the relationship between Mother's Education and Child Mortality
+
+To understand the influence of maternal education on child outcomes, we conducted an analysis examining the distribution of child outcomes across different levels of maternal education.
+
+```{r pressure, echo=FALSE}
+dead_data <- subset(data, Outcome == "Dead")
+ggplot(dead_data, aes(x = factor(MotherEducation), fill = Outcome)) +
+  geom_bar() +
+  labs(title = "Mother's Education vs. Child's Outcome",
+       x = "Mother's Education",
+       y = "Proportion",
+       fill = "Outcome")
+
+```
+
+According to an article by the World Health Organization titled "The Extension of the 2025 Maternal, Infant and Young Child Nutrition Targets to 2030," maternal education plays a crucial role in child survival. Mothers with a high level of education are more likely to have better knowledge about nutrients, hygiene, and child health care practices. Interestingly, our data seems to support this notion, as we observe lower mortality rates among highly educated mothers compared to other groups.
+
+## Mother's Education by Age at First Birth Group and Wealth Index
+```{r echo=FALSE}
+
+multivariate_analysis <- data %>%
+  mutate(AgeGroup = case_when(
+    AgeAtFirstBirth < 18 ~ "First Birth before 18",
+    between(AgeAtFirstBirth, 18, 35) ~ "First Birth between 18 and 35",
+    TRUE ~ "First Birth above 35"
+  )) %>%
+  select(MotherEducation, WealthIndex, AgeGroup)
+
+ggplot(multivariate_analysis, aes(x = MotherEducation, fill = AgeGroup)) +
+  geom_bar(position = "dodge", color = "black") +
+  labs(title = "Mother's Education by Age at First Birth Group and Wealth Index",
+       x = "Mother's Education",
+       y = "Count",
+       fill = "Age at First Birth Group") +
+  facet_wrap(~ WealthIndex) + 
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+A higher proportion of mothers with lower education levels have their first birth before 18 may suggest a lack of access to education and resources, potentially contributing to underage pregnancies. Policy measures could include improving access to education, healthcare services, and reproductive health education to empower women and reduce the prevalence of underage births.
+
+```{r echo=FALSE}
+mortality_count <- joined_data %>%
+  group_by(Name) %>%
+  summarise(MortalityCount = sum(Outcome == "Dead"))
+
+ggplot() +
+  geom_sf(data = mortality_count, aes(fill = MortalityCount)) +
+  scale_fill_viridis_c() +
+  labs(fill = "Mortality Count") +
+  theme_minimal() +
+  ggtitle("Spatial Distribution of Mortality Count")
+```
+Kirinyaga, Marsabit, and Taita Taveta counties exhibit notably lower mortality rates compared to other regions.Several factors may contribute to the low mortality rates observed in these counties, including access to healthcare facilities, quality of healthcare services, socioeconomic factors, and public health interventions
+
+
+
+## Multiple Imputation and Normality Testing
+Single imputation methods such as mean imputation, introduce artificial variability, leading to underestimation of standard errors and inflated Type I error rates therefore, we will using multiple imputations which generate multiple plausible datasets, preserving the variability present in the data and providing more accurate estimates of uncertainty.
+
+### Multiple Imputation
+
+
+  
+```{r results='hide', echo=FALSE}
+library(mice)
+imputed_data <- mice(data, method = "pmm", m = 5)
+completed_data <- complete(imputed_data)
+completed_data$BirthWeight <- as.numeric(completed_data$BirthWeight)
+
+ggplot(completed_data, aes(x = BirthWeight)) +
+  geom_histogram(fill = "skyblue", color = "black", bins = 20) +
+  labs(title = "Histogram of Birth Weight (Imputed)",
+       x = "Birth Weight",
+       y = "Frequency")
+
+
+```
+
+The histogram illustrates the distribution of imputed birth weights. It's evident that the birth weights follow a normal distribution, with the mean weight estimated to be around 3.6 units.
+
+## Parametric test
+Since all the conditions for parametric tests are met, we'll proceed with a T-test. The null hypothesis states that there is no significant difference in the means of birth weight between the number of alive and dead children.
+
+```{r }
+t_test_result <- t.test(BirthWeight ~ Outcome, data = completed_data)
+t_test_result
+
+```
+
+The Welch Two Sample t-test compares the means of Birth Weight between alive and dead children. The test yields a t-statistic of 2.2831, with a degrees of freedom (df) of approximately 138.42, and a p-value of 0.02395.
+
+Since the p-value (0.02395) is less than the significance level, 0.05, we reject the null hypothesis. Therefore, we conclude that there is a statistically significant difference in the means of Birth Weight between alive and dead children.
+
+
+The 95% confidence interval for the difference in means ranges from 0.02462249 to 0.34300082. This interval suggests that, on average, the Birth Weight of dead children tends to be lower than that of alive
+children.
+
+
+# Conclusion
+
+In this analysis, we explored various aspects related to childhood mortality using a dataset containing information on maternal characteristics, pregnancy details, and child outcomes. Here are the key findings from our analysis:
+
+## Exploratory Data Analysis (EDA)
+
+- **Mother's Education**: We observed a clear association between mother's education level and child mortality. Children born to mothers with higher education levels tended to have lower mortality rates compared to those born to mothers with lower education levels.
+- **Age at First Birth**: There was evidence suggesting that the age at which a mother gives birth for the first time could impact child mortality. Specifically, mothers giving birth before the age of 18 or after the age of 35 showed higher child mortality rates.
+- **Birth Weight**: The distribution of birth weights appeared to vary among different outcome groups, indicating a potential association between birth weight and child mortality.
+
+## Parametric and Non-parametric Tests
+
+- **T-Test**: We conducted a parametric t-test to compare the mean birth weight between different outcome groups. The results showed a statistically significant difference in birth weight between the groups, suggesting a potential association between birth weight and child mortality.
+
+
+## Spatial Analysis
+
+- **Spatial Distribution of Mortality**: We visualized the spatial distribution of child mortality across different counties. Counties such as Kirinyaga, Marsabit, and Taita Taveta exhibited lower mortality rates compared to others, indicating potential regional disparities in child health outcomes.
+
+## Implications and Future Directions
+
+These findings have important implications for public health interventions aimed at reducing childhood mortality. Strategies targeting maternal education, prenatal care, and birth weight monitoring could help mitigate the risk of child mortality. Future research could explore additional factors influencing childhood mortality and further investigate regional disparities to inform targeted interventions.
+
+Overall, this analysis provides valuable insights into the determinants of childhood mortality and underscores the importance of addressing socio-economic, demographic, and geographical factors in promoting child health and well-being.
+
+
+
+
+
+

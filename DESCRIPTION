@@ -1,1 +1,31 @@
-
+Package: SpatialAnalyticsDashboard
+Title: Interactive Spatial Analytics Dashboard
+Version: 0.1.0
+Authors@R:
+    person(
+        given = "Maurice Oboya",
+        role = c("aut", "cre"),
+        email = "test@gmail.com"
+    )
+Description: An interactive Shiny dashboard for uploading, exploring,
+    analyzing, and visualizing spatial and tabular datasets. The application
+    provides secure user authentication, interactive maps, statistical
+    visualizations, and dynamic data tables to support data-driven decision
+    making.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports:
+    shiny,
+    shinydashboard,
+    shinymanager,
+    readxl,
+    dplyr,
+    sf,
+    ggplot2,
+    viridis,
+    stringr,
+    plotly,
+    tibble,
+    DT
+RoxygenNote: 7.3.2
